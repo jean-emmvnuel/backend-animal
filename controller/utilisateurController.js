@@ -67,18 +67,13 @@ async function Register(req, res) {
         // inserons l'utilisateur dans la table utilisateurs
         const { data2, error: error2 } = await supabase
             .from('utilisateurs')
-            .upsert(
-                { 
-                    id: data.user.id, 
-                    nom_prenom: nom_prenom, 
+            .insert([
+                {
+                    id: data.user.id,
                     email: email,
-                    updated_at: new Date().toISOString()
-                },
-                { 
-                    onConflict: 'id',
-                    ignoreDuplicates: false
+                    nom_prenom: nom_prenom
                 }
-            )
+            ])
             .select();
 
         if (error2) {

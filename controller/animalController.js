@@ -128,10 +128,39 @@ async function deleteAnimalById(req, res) {
     }
 }
 
+// recupérer tous les animaux d'un utilisateur
+async function getAnimalsByUserId(req, res) {
+    try {
+        const user = req.user;
+        console.log(user);
+        const { data, error } = await supabase
+            .from('animaux')
+            .select('*')
+            .eq('owner_id', user.id);
+
+        if (error) {
+            throw error;
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Liste des animaux recuperee avec succes',
+            data: data
+        });
+    } catch (error) {
+        console.error('Erreur lors de la recuperation des animaux :', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur serveur lors de la recuperation des animaux'
+        });
+    }
+}
+
 
 module.exports = {
     getAllAnimals,
     addAnimal,
     updateAnimalById,
-    deleteAnimalById
+    deleteAnimalById,
+    getAnimalsByUserId
 };
