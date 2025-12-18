@@ -25,43 +25,6 @@ async function getAllAnimals(req, res) {
     }
 }
 
-// Ajouter un animal 
-async function addAnimal(req, res) {
-    const { nom, espece, race, sexe, date_de_naissance, couleur } = req.body;
-
-    try {
-        const { data, error } = await supabase
-            .from('animaux')
-            .insert([
-                { 
-                    nom: nom, 
-                    espece: espece, 
-                    owner_id: "3f5bda74-f0ec-42ac-a6e4-d2f6bef7b5b1",
-                    race: race, 
-                    sexe: sexe, 
-                    date_naissance: date_de_naissance, 
-                    couleur: couleur
-                }
-            ])
-            .select();
-
-        if (error) {
-            throw error;
-        }
-
-        res.status(200).json({
-            success: true,
-            message: 'Animal ajouté avec succès',
-            data: data
-        });
-    } catch (error) {
-        console.error('Erreur lors de l\'ajout de l\'animal :', error);
-        res.status(500).json({
-            success: false,
-            message: 'Erreur serveur lors de l\'ajout de l\'animal'
-        });
-    }
-}
 
 // modifier un animal par son ID
 async function updateAnimalById(req, res) {
@@ -157,9 +120,48 @@ async function getAnimalsByUserId(req, res) {
 }
 
 
+//  ajouter un animal en fonction de de l'id de l'utilisateur recuperer dans le middleware
+async function addAnimalByUserId(req, res) {
+    try{
+        const user = req.user;
+        const { nom, espece, race, sexe, date_de_naissance, couleur } = req.body;
+        const { data, error } = await supabase
+            .from('animaux')
+            .insert([
+                { 
+                    nom: nom, 
+                    espece: espece, 
+                    owner_id: user.id,
+                    race: race, 
+                    sexe: sexe, 
+                    date_naissance: date_de_naissance, 
+                    couleur: couleur
+                }
+            ])
+            .select();
+
+        if (error) {
+            throw error;
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Animal ajouté avec succès',
+            data: data
+        });
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout de l\'animal :', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur serveur lors de l\'ajout de l\'animal'
+        });
+    }
+}
+
+
 module.exports = {
     getAllAnimals,
-    addAnimal,
+    addAnimalByUserId,
     updateAnimalById,
     deleteAnimalById,
     getAnimalsByUserId

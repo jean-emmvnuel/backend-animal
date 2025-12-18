@@ -4,7 +4,7 @@ const animalController = require('../controller/animalController');
 const auth = require("../middleware/authMiddleware")
 
 router.get('/', auth, animalController.getAllAnimals);
-router.post('/', auth, animalController.addAnimal);
+router.post('/', auth, animalController.addAnimalByUserId);
 router.put('/:id', auth, animalController.updateAnimalById);
 router.delete('/:id', auth, animalController.deleteAnimalById);
 router.get("/user",auth, animalController.getAnimalsByUserId)
